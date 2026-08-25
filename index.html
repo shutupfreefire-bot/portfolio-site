@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mohamed Abdul Kader, AI Automation Engineer</title>
+  <meta name="description" content="Portfolio of Mohamed Abdul Kader. AI automation, agent workflows, Python, FastAPI, Supabase. Chennai, India." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&family=Inter+Tight:ital,wght@0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b0b0e;
+      --bg2: #121217;
+      --line: #232329;
+      --text: #f0f0f2;
+      --muted: #9b9ba6;
+      --accent: #e8ff47; /* single acid accent, locked */
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: 'Geist', sans-serif;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--accent); color: #0b0b0e; }
+    h1,h2,h3 { font-family: 'Inter Tight', sans-serif; letter-spacing: -0.03em; }
+    h1 em, h2 em { font-style: italic; font-weight: 700; }
+    a { color: inherit; text-decoration: none; }
+    .mono { font-family: 'Geist Mono', monospace; }
+    .wrap { max-width: 1320px; margin: 0 auto; padding: 0 clamp(1.25rem, 4vw, 3rem); }
+    img { display: block; width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85) contrast(1.05); }
+
+    /* ---------- LOADER ---------- */
+    #loader {
+      position: fixed; inset: 0; z-index: 200;
+      background: var(--bg);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      gap: 1.5rem; transition: opacity .7s ease, visibility .7s;
+    }
+    #loader.done { opacity: 0; visibility: hidden; }
+    #loader .word {
+      font-family: 'Inter Tight', sans-serif; font-weight: 700; font-style: italic;
+      font-size: clamp(2.2rem, 7vw, 5rem); letter-spacing: -0.03em;
+      overflow: hidden;
+    }
+    #loader .word span { display: inline-block; transform: translateY(110%); animation: rise .9s cubic-bezier(.16,1,.3,1) forwards .2s; }
+    @keyframes rise { to { transform: translateY(0); } }
+    #loader .bar { width: min(320px, 60vw); height: 1px; background: var(--line); position: relative; }
+    #loader .bar i { position: absolute; inset: 0; right: 100%; background: var(--accent); transition: right .3s ease; }
+    #loader .pct { font-family: 'Geist Mono', monospace; font-size: .75rem; color: var(--muted); letter-spacing: .1em; }
+
+    /* ---------- NAV ---------- */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 68px; padding: 0 clamp(1.25rem, 4vw, 3rem);
+      background: rgba(11,11,14,.65); backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--line);
+      opacity: 0; transform: translateY(-8px); transition: opacity .8s ease .2s, transform .8s ease .2s;
+    }
+    body.ready nav { opacity: 1; transform: none; }
+    nav .logo { font-family: 'Inter Tight', sans-serif; font-weight: 800; font-size: 1.05rem; letter-spacing: -0.02em; }
+    nav ul { display: flex; gap: 2rem; list-style: none; }
+    nav ul a { font-size: .85rem; color: var(--muted); transition: color .2s; }
+    nav ul a:hover { color: var(--text); }
+    .nav-cta {
+      font-size: .85rem; font-weight: 600; color: #0b0b0e;
+      background: var(--text); padding: .5rem 1.1rem; border-radius: 999px;
+      transition: background .2s;
+    }
+    .nav-cta:hover { background: var(--accent); }
+
+    /* ---------- HERO ---------- */
+    .hero { position: relative; min-height: 100dvh; display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 2rem; }
+    .hero-copy { padding-top: 68px; }
+    .hero h1 { font-size: clamp(2.6rem, 5.6vw, 4.8rem); line-height: 1.02; margin: 1.2rem 0 1.4rem; }
+    .hero .sub { max-width: 42ch; color: var(--muted); font-size: 1.02rem; line-height: 1.65; margin-bottom: 2rem; }
+    .hero-ctas { display: flex; gap: .8rem; align-items: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: .55rem;
+      padding: .85rem 1.5rem; border-radius: 999px; font-weight: 600; font-size: .95rem;
+      transition: transform .15s ease, background .2s, border-color .2s;
+    }
+    .btn:active { transform: scale(.97); }
+    .btn-acid { background: var(--accent); color: #0b0b0e; }
+    .btn-acid:hover { transform: translateY(-2px); }
+    .btn-line { border: 1px solid var(--line); color: var(--text); }
+    .btn-line:hover { border-color: var(--muted); }
+    .hero-meta { margin-top: 3.5rem; display: flex; gap: 2.5rem; color: var(--muted); font-size: .8rem; }
+    .hero-meta b { display: block; color: var(--text); font-size: 1.15rem; font-family: 'Inter Tight', sans-serif; }
+
+    #stage { position: relative; height: 100dvh; }
+    #stage canvas { width: 100%; height: 100%; display: block; cursor: grab; touch-action: pan-y; }
+    #stage canvas:active { cursor: grabbing; }
+    .drag-hint {
+      position: absolute; bottom: 2rem; right: clamp(1.25rem, 4vw, 3rem);
+      font-family: 'Geist Mono', monospace; font-size: .7rem; letter-spacing: .12em;
+      color: var(--muted); text-transform: uppercase; pointer-events: none;
+    }
+
+    /* ---------- MARQUEE (single) ---------- */
+    .marquee { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); overflow: hidden; padding: 1.1rem 0; }
+    .marquee .track { display: flex; gap: 3rem; width: max-content; animation: slide 30s linear infinite; }
+    .marquee span { font-family: 'Geist Mono', monospace; font-size: .85rem; color: var(--muted); white-space: nowrap; }
+    .marquee span i { color: var(--accent); font-style: normal; }
+    @keyframes slide { to { transform: translateX(-50%); } }
+
+    /* ---------- SECTIONS ---------- */
+    section { padding: clamp(5rem, 10vw, 8.5rem) 0; }
+    .sec-head { margin-bottom: 3rem; }
+    .sec-head h2 { font-size: clamp(1.9rem, 4vw, 3.2rem); line-height: 1.05; }
+    .sec-head p { color: var(--muted); margin-top: .9rem; max-width: 52ch; line-height: 1.6; }
+
+    /* projects: staggered asymmetric grid */
+    .proj-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1.25rem; }
+    .proj { position: relative; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); background: var(--bg2); }
+    .proj .ph { aspect-ratio: 4/3; overflow: hidden; }
+    .proj .ph img { transition: transform .6s cubic-bezier(.16,1,.3,1); }
+    .proj:hover .ph img { transform: scale(1.04); }
+    .proj .body { padding: 1.4rem 1.5rem 1.6rem; }
+    .proj h3 { font-size: 1.25rem; margin-bottom: .5rem; }
+    .proj p { color: var(--muted); font-size: .92rem; line-height: 1.6; }
+    .proj .tags { display: flex; gap: .45rem; flex-wrap: wrap; margin-top: 1rem; }
+    .proj .tags span { font-family: 'Geist Mono', monospace; font-size: .7rem; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: .25rem .7rem; }
+    .proj-1 { grid-column: 1 / span 7; }
+    .proj-2 { grid-column: 8 / span 5; transform: translateY(3.5rem); }
+    .proj-3 { grid-column: 1 / span 5; transform: translateY(-1.5rem); }
+    .proj-4 { grid-column: 6 / span 7; }
+
+    /* process: numbered rows */
+    .steps { border-top: 1px solid var(--line); }
+    .step { display: grid; grid-template-columns: 90px 1fr 1.2fr; gap: 2rem; padding: 2.2rem 0; border-bottom: 1px solid var(--line); align-items: baseline; }
+    .step .num { font-family: 'Geist Mono', monospace; color: var(--accent); font-size: .85rem; }
+    .step h3 { font-size: clamp(1.2rem, 2.2vw, 1.7rem); }
+    .step p { color: var(--muted); line-height: 1.65; font-size: .95rem; }
+
+    /* certificates: horizontal cards */
+    .certs { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+    .cert { border: 1px solid var(--line); border-radius: 14px; padding: 2rem; background: var(--bg2); display: flex; flex-direction: column; gap: .6rem; transition: border-color .25s; }
+    .cert:hover { border-color: var(--accent); }
+    .cert .issuer { font-family: 'Geist Mono', monospace; font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+    .cert h3 { font-size: 1.35rem; }
+    .cert p { color: var(--muted); font-size: .92rem; line-height: 1.6; }
+
+    /* CTA banner */
+    .banner {
+      border-radius: 20px; border: 1px solid var(--line);
+      background: linear-gradient(180deg, #141419, #0e0e12);
+      text-align: center; padding: clamp(3.5rem, 8vw, 6rem) 2rem;
+    }
+    .banner h2 { font-size: clamp(2rem, 4.6vw, 3.6rem); line-height: 1.05; }
+    .banner p { color: var(--muted); max-width: 46ch; margin: 1.1rem auto 2.2rem; line-height: 1.6; }
+
+    /* ---------- FORM ---------- */
+    .form-shell { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.25rem; }
+    form {
+      border: 1px solid var(--line); border-radius: 14px; background: var(--bg2);
+      padding: 2rem; display: grid; gap: 1.2rem;
+    }
+    .f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .f-field { display: grid; gap: .45rem; }
+    .f-field label { font-size: .82rem; color: var(--muted); font-weight: 500; }
+    .f-field input, .f-field select, .f-field textarea {
+      background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+      padding: .75rem .9rem; color: var(--text); font: inherit; font-size: .95rem;
+      transition: border-color .2s;
+    }
+    .f-field input:focus, .f-field select:focus, .f-field textarea:focus { outline: none; border-color: var(--accent); }
+    .f-field input.err, .f-field select.err, .f-field textarea.err { border-color: #e5484d; }
+    .f-field textarea { resize: vertical; min-height: 110px; }
+    .f-field select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 18px) 55%, calc(100% - 13px) 55%; background-size: 5px 5px; background-repeat: no-repeat; }
+    .hp { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }
+    .f-actions { display: flex; align-items: center; gap: 1rem; }
+    .f-status { font-size: .78rem; color: var(--muted); }
+    .f-status.ok { color: var(--accent); }
+    .f-status.bad { color: #e5484d; }
+    .form-side {
+      border: 1px solid var(--line); border-radius: 14px;
+      background: linear-gradient(180deg, #141419, #0e0e12);
+      padding: 2rem; display: flex; flex-direction: column; gap: .8rem; align-items: flex-start;
+    }
+    .form-kicker { font-size: .72rem; letter-spacing: .12em; color: var(--muted); text-transform: uppercase; }
+    .form-side-text { color: var(--text); line-height: 1.6; font-size: 1.05rem; font-weight: 500; margin-bottom: .8rem; }
+    @media (max-width: 900px) {
+      .form-shell { grid-template-columns: 1fr; }
+      .f-row { grid-template-columns: 1fr; }
+    }
+
+    /* footer */
+    footer { border-top: 1px solid var(--line); padding: 4rem 0 2.5rem; }
+    .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 3rem; margin-bottom: 3.5rem; }
+    .foot-grid .big { font-family: 'Inter Tight', sans-serif; font-weight: 800; font-size: clamp(2rem, 4vw, 3rem); letter-spacing: -0.03em; line-height: 1; }
+    .foot-grid h4 { font-family: 'Geist Mono', monospace; font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
+    .foot-grid ul { list-style: none; display: grid; gap: .6rem; font-size: .92rem; }
+    .foot-grid ul a { color: var(--muted); transition: color .2s; }
+    .foot-grid ul a:hover { color: var(--accent); }
+    .foot-base { display: flex; justify-content: space-between; color: var(--muted); font-size: .8rem; border-top: 1px solid var(--line); padding-top: 1.5rem; }
+
+    /* reveal on scroll */
+    .rv { opacity: 0; transform: translateY(22px); transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); }
+    .rv.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .rv { opacity: 1; transform: none; transition: none; }
+      .marquee .track { animation: none; }
+      #loader .word span { animation: none; transform: none; }
+    }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      #stage { height: 46dvh; order: -1; }
+      .drag-hint { display: none; }
+      .proj-grid { grid-template-columns: 1fr; }
+      .proj-1, .proj-2, .proj-3, .proj-4 { grid-column: 1; transform: none; }
+      .step { grid-template-columns: 60px 1fr; }
+      .step p { grid-column: 2; }
+      .certs { grid-template-columns: 1fr; }
+      .foot-grid { grid-template-columns: 1fr; gap: 2rem; }
+      nav ul { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loader" aria-hidden="true">
+    <div class="word"><span>Abdul<span style="color:var(--accent)">.</span></span></div>
+    <div class="bar"><i id="bar-fill"></i></div>
+    <div class="pct" id="pct">0%</div>
+  </div>
+
+  <nav>
+    <div class="logo">abdul<span style="color:var(--accent)">.</span>dev</div>
+    <ul>
+      <li><a href="#work">Work</a></li>
+      <li><a href="#how">How I work</a></li>
+      <li><a href="#certs">Certificates</a></li>
+    </ul>
+    <a class="nav-cta" href="https://wa.me/917092312068?text=Hi%20Abdul%2C%20saw%20your%20portfolio" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+  </nav>
+
+  <header class="hero wrap">
+    <div class="hero-copy">
+      <h1>I build software<br />that does the <em>boring part.</em></h1>
+      <p class="sub">AI automation engineer in Chennai. Agent workflows, scraping pipelines, and AI-powered products in Python, FastAPI and Supabase.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-acid" href="https://wa.me/917092312068?text=Hi%20Abdul%2C%20saw%20your%20portfolio" target="_blank" rel="noopener noreferrer">Message on WhatsApp</a>
+        <a class="btn btn-line" href="#work">See the work</a>
+      </div>
+      <div class="hero-meta">
+        <div><b>3+</b>shipped projects</div>
+        <div><b>2026</b>B.Com, The New College</div>
+        <div><b>Remote</b>Chennai, India</div>
+      </div>
+    </div>
+    <div id="stage">
+      <canvas id="gl"></canvas>
+      <div class="drag-hint">drag to rotate</div>
+    </div>
+  </header>
+
+  <div class="marquee" aria-hidden="true">
+    <div class="track">
+      <span>Python <i>/</i> FastAPI <i>/</i> Supabase <i>/</i> AI agents <i>/</i> Browser automation <i>/</i> Prompt engineering <i>/</i> Three.js <i>/</i> Node.js <i>/</i> Git <i>/</i></span>
+      <span>Python <i>/</i> FastAPI <i>/</i> Supabase <i>/</i> AI agents <i>/</i> Browser automation <i>/</i> Prompt engineering <i>/</i> Three.js <i>/</i> Node.js <i>/</i> Git <i>/</i></span>
+    </div>
+  </div>
+
+  <section id="work" class="wrap">
+    <div class="sec-head rv">
+      <h2>Shipped, not <em>theorized.</em></h2>
+      <p>Real systems with real users. Each one started as "can this run itself?" and the answer kept being yes.</p>
+    </div>
+    <div class="proj-grid">
+      <article class="proj proj-1 rv">
+        <div class="ph"><img src="https://picsum.photos/seed/frontdesk-terminal-dark/1200/900" alt="FrontDesk AI dashboard" loading="lazy" /></div>
+        <div class="body">
+          <h3>FrontDesk AI</h3>
+          <p>Multi-tenant AI front-desk that answers and routes customer conversations for local businesses on WhatsApp. Supabase backend, Gemini for the brain, FastAPI for the plumbing.</p>
+          <div class="tags"><span>FastAPI</span><span>Supabase</span><span>Gemini</span><span>WhatsApp</span></div>
+        </div>
+      </article>
+      <article class="proj proj-2 rv">
+        <div class="ph"><img src="https://picsum.photos/seed/deals-telegram-neon/900/700" alt="Silicon Deals channel" loading="lazy" /></div>
+        <div class="body">
+          <h3>Silicon Deals</h3>
+          <p>A Telegram channel that feeds itself: watches deal sources, filters junk, attaches affiliate tags and posts. Zero manual work after setup.</p>
+          <div class="tags"><span>Python</span><span>Telegram API</span></div>
+        </div>
+      </article>
+      <article class="proj proj-3 rv">
+        <div class="ph"><img src="https://picsum.photos/seed/agents-lab-mono/900/700" alt="Agent experiments" loading="lazy" /></div>
+        <div class="body">
+          <h3>Agent Lab</h3>
+          <p>An ongoing series of experiments running open-source AI agents locally: browser control, CLI agents, model routing. Where the other projects come from.</p>
+          <div class="tags"><span>Claude Code</span><span>CDP</span><span>OSS</span></div>
+        </div>
+      </article>
+      <article class="proj proj-4 rv">
+        <div class="ph"><img src="https://picsum.photos/seed/webgl-dark-abstract/1200/900" alt="Interactive web work" loading="lazy" /></div>
+        <div class="body">
+          <h3>This site</h3>
+          <p>Built it the way I build everything: pick the tools, read the source, ship the thing. The 3D on this page is Three.js, drag it.</p>
+          <div class="tags"><span>Three.js</span><span>Vite</span><span>Vanilla JS</span></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="how" class="wrap">
+    <div class="sec-head rv">
+      <h2>How a project <em>goes.</em></h2>
+    </div>
+    <div class="steps">
+      <div class="step rv">
+        <span class="num">01</span>
+        <h3>Find the repetitive thing</h3>
+        <p>Every build starts with a task someone is doing by hand that a machine should be doing. Deals, replies, scraping, posting.</p>
+      </div>
+      <div class="step rv">
+        <span class="num">02</span>
+        <h3>Prototype ugly, fast</h3>
+        <p>Get a working version in days, not weeks. Ugly but real, running on my own machine before anything gets polished.</p>
+      </div>
+      <div class="step rv">
+        <span class="num">03</span>
+        <h3>Make it survive</h3>
+        <p>Error handling, retries, logging. The difference between a demo and a system is whether it still works when you sleep.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="certs" class="wrap">
+    <div class="sec-head rv">
+      <h2>Paper <em>trail.</em></h2>
+    </div>
+    <div class="certs">
+      <div class="cert rv">
+        <span class="issuer">NoviTech R&amp;D Pvt Ltd</span>
+        <h3>Data Analytics MasterClass</h3>
+        <p>30-day intensive program, April to June 2026. Hands-on analytics work: collecting, cleaning and reading data.</p>
+      </div>
+      <div class="cert rv">
+        <span class="issuer">Adani Foundation</span>
+        <h3>Project Udaan</h3>
+        <p>Educational visit to Adani Katupalli Port, December 2025. Industrial-scale operations, seen from the inside.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="banner rv">
+      <h2>Got something that<br />needs <em>automating?</em></h2>
+      <p>Roles, freelance builds, or just a question about an AI workflow. WhatsApp is the fastest way to reach me.</p>
+      <div class="hero-ctas" style="justify-content:center">
+        <a class="btn btn-acid" href="https://wa.me/917092312068?text=Hi%20Abdul%2C%20saw%20your%20portfolio" target="_blank" rel="noopener noreferrer">Message on WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap" id="contact">
+    <div class="sec-head rv">
+      <h2>Tell me about <em>your project.</em></h2>
+      <p>Fill this in and it lands directly on my desk. Or skip the form and use WhatsApp below.</p>
+    </div>
+    <div class="form-shell rv">
+      <form id="lead-form" novalidate>
+        <div class="f-row">
+          <div class="f-field">
+            <label for="f-name">Name</label>
+            <input id="f-name" name="name" type="text" required autocomplete="name" placeholder="Your name" />
+          </div>
+          <div class="f-field">
+            <label for="f-email">Email</label>
+            <input id="f-email" name="email" type="email" required autocomplete="email" placeholder="you@example.com" />
+          </div>
+        </div>
+        <div class="f-field">
+          <label for="f-type">What do you need?</label>
+          <select id="f-type" name="type" required>
+            <option value="" disabled selected>Pick one</option>
+            <option>AI automation for my business</option>
+            <option>A chatbot / AI agent</option>
+            <option>A website or web app</option>
+            <option>Scraping / data pipeline</option>
+            <option>Something else</option>
+          </select>
+        </div>
+        <div class="f-field">
+          <label for="f-msg">Details</label>
+          <textarea id="f-msg" name="message" rows="4" required placeholder="What are you trying to automate or build? Any deadline?"></textarea>
+        </div>
+        <!-- honeypot: humans never see or fill this -->
+        <div class="hp" aria-hidden="true">
+          <label>Company<input name="company" tabindex="-1" autocomplete="off" /></label>
+        </div>
+        <div class="f-actions">
+          <button class="btn btn-acid" type="submit" id="f-submit">Send it</button>
+          <span class="f-status mono" id="f-status" role="status"></span>
+        </div>
+      </form>
+      <div class="form-side">
+        <p class="mono form-kicker">PREFER CHAT?</p>
+        <p class="form-side-text">WhatsApp is faster. Same person, instant reply.</p>
+        <a class="btn btn-line" href="https://wa.me/917092312068?text=Hi%20Abdul%2C%20saw%20your%20portfolio" target="_blank" rel="noopener noreferrer">Message on WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <div class="big">abdul<span style="color:var(--accent)">.</span>dev</div>
+          <p style="color:var(--muted); margin-top:1rem; max-width:32ch; line-height:1.6; font-size:.92rem;">Mohamed Abdul Kader. AI automation engineer, Chennai. Building systems that work while their owner sleeps.</p>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="https://wa.me/917092312068" target="_blank" rel="noopener noreferrer">WhatsApp</a></li>
+            <li><a href="mailto:ibrym005@gmail.com">ibrym005@gmail.com</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Elsewhere</h4>
+          <ul>
+            <li><a href="#work">Work</a></li>
+            <li><a href="#certs">Certificates</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="foot-base">
+        <span>© 2026 Mohamed Abdul Kader</span>
+        <span class="mono">Chennai, India</span>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/main.js"></script>
+</body>
+</html>
