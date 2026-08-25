@@ -103,6 +103,8 @@
     /* ---------- MARQUEE (single) ---------- */
     .marquee { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); overflow: hidden; padding: 1.1rem 0; }
     .marquee .track { display: flex; gap: 3rem; width: max-content; animation: slide 30s linear infinite; }
+    .marquee:hover .track { animation-play-state: paused; }
+    .marquee.off .track { animation-play-state: paused; }
     .marquee span { font-family: 'Geist Mono', monospace; font-size: .85rem; color: var(--muted); white-space: nowrap; }
     .marquee span i { color: var(--accent); font-style: normal; }
     @keyframes slide { to { transform: translateX(-50%); } }
@@ -173,7 +175,8 @@
     .f-field select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%); background-position: calc(100% - 18px) 55%, calc(100% - 13px) 55%; background-size: 5px 5px; background-repeat: no-repeat; }
     .hp { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }
     .f-actions { display: flex; align-items: center; gap: 1rem; }
-    .f-status { font-size: .78rem; color: var(--muted); }
+    .f-status { font-size: .78rem; color: var(--muted); transition: opacity .18s cubic-bezier(.16,1,.3,1), transform .18s cubic-bezier(.16,1,.3,1); }
+    .f-status.swap { opacity: 0; transform: translateY(4px); filter: blur(2px); transition-duration: .12s; }
     .f-status.ok { color: var(--accent); }
     .f-status.bad { color: #e5484d; }
     .form-side {
@@ -198,11 +201,14 @@
     .foot-grid ul a:hover { color: var(--accent); }
     .foot-base { display: flex; justify-content: space-between; color: var(--muted); font-size: .8rem; border-top: 1px solid var(--line); padding-top: 1.5rem; }
 
-    /* reveal on scroll */
+    /* reveal on scroll: two tiers — heads slow, cards/rows quick with sibling stagger */
     .rv { opacity: 0; transform: translateY(22px); transition: opacity .8s cubic-bezier(.16,1,.3,1), transform .8s cubic-bezier(.16,1,.3,1); }
-    .rv.in { opacity: 1; transform: none; }
+    .rv-sm { opacity: 0; transform: translateY(12px); transition: opacity .5s cubic-bezier(.16,1,.3,1), transform .5s cubic-bezier(.16,1,.3,1); }
+    .rv-sm.in, .rv.in { opacity: 1; transform: none; }
+    .stagger > * { transition-delay: calc(var(--i, 0) * 70ms); }
+    .stagger.in > * { transition-delay: 0s; }
     @media (prefers-reduced-motion: reduce) {
-      .rv { opacity: 1; transform: none; transition: none; }
+      .rv, .rv-sm { opacity: 1; transform: none; transition: none; }
       .marquee .track { animation: none; }
       #loader .word span { animation: none; transform: none; }
     }
@@ -271,8 +277,8 @@
       <h2>Shipped, not <em>theorized.</em></h2>
       <p>Real systems with real users. Each one started as "can this run itself?" and the answer kept being yes.</p>
     </div>
-    <div class="proj-grid">
-      <article class="proj proj-1 rv">
+    <div class="proj-grid stagger">
+      <article class="proj proj-1 rv-sm">
         <div class="ph"><img src="https://picsum.photos/seed/frontdesk-terminal-dark/1200/900" alt="FrontDesk AI dashboard" loading="lazy" /></div>
         <div class="body">
           <h3>FrontDesk AI</h3>
@@ -280,7 +286,7 @@
           <div class="tags"><span>FastAPI</span><span>Supabase</span><span>Gemini</span><span>WhatsApp</span></div>
         </div>
       </article>
-      <article class="proj proj-2 rv">
+      <article class="proj proj-2 rv-sm">
         <div class="ph"><img src="https://picsum.photos/seed/deals-telegram-neon/900/700" alt="Silicon Deals channel" loading="lazy" /></div>
         <div class="body">
           <h3>Silicon Deals</h3>
@@ -288,7 +294,7 @@
           <div class="tags"><span>Python</span><span>Telegram API</span></div>
         </div>
       </article>
-      <article class="proj proj-3 rv">
+      <article class="proj proj-3 rv-sm">
         <div class="ph"><img src="https://picsum.photos/seed/agents-lab-mono/900/700" alt="Agent experiments" loading="lazy" /></div>
         <div class="body">
           <h3>Agent Lab</h3>
@@ -296,7 +302,7 @@
           <div class="tags"><span>Claude Code</span><span>CDP</span><span>OSS</span></div>
         </div>
       </article>
-      <article class="proj proj-4 rv">
+      <article class="proj proj-4 rv-sm">
         <div class="ph"><img src="https://picsum.photos/seed/webgl-dark-abstract/1200/900" alt="Interactive web work" loading="lazy" /></div>
         <div class="body">
           <h3>This site</h3>
@@ -311,18 +317,18 @@
     <div class="sec-head rv">
       <h2>How a project <em>goes.</em></h2>
     </div>
-    <div class="steps">
-      <div class="step rv">
+    <div class="steps stagger">
+      <div class="step rv-sm">
         <span class="num">01</span>
         <h3>Find the repetitive thing</h3>
         <p>Every build starts with a task someone is doing by hand that a machine should be doing. Deals, replies, scraping, posting.</p>
       </div>
-      <div class="step rv">
+      <div class="step rv-sm">
         <span class="num">02</span>
         <h3>Prototype ugly, fast</h3>
         <p>Get a working version in days, not weeks. Ugly but real, running on my own machine before anything gets polished.</p>
       </div>
-      <div class="step rv">
+      <div class="step rv-sm">
         <span class="num">03</span>
         <h3>Make it survive</h3>
         <p>Error handling, retries, logging. The difference between a demo and a system is whether it still works when you sleep.</p>
@@ -334,13 +340,13 @@
     <div class="sec-head rv">
       <h2>Paper <em>trail.</em></h2>
     </div>
-    <div class="certs">
-      <div class="cert rv">
+    <div class="certs stagger">
+      <div class="cert rv-sm">
         <span class="issuer">NoviTech R&amp;D Pvt Ltd</span>
         <h3>Data Analytics MasterClass</h3>
         <p>30-day intensive program, April to June 2026. Hands-on analytics work: collecting, cleaning and reading data.</p>
       </div>
-      <div class="cert rv">
+      <div class="cert rv-sm">
         <span class="issuer">Adani Foundation</span>
         <h3>Project Udaan</h3>
         <p>Educational visit to Adani Katupalli Port, December 2025. Industrial-scale operations, seen from the inside.</p>

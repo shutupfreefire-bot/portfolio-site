@@ -8,11 +8,25 @@ const form = document.getElementById('lead-form');
 const statusEl = document.getElementById('f-status');
 const submitBtn = document.getElementById('f-submit');
 
+// crossfade the status text between states: fade out 120ms, swap text, fade in 180ms
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function setStatus(text, cls) {
+  if (reduceMotion) {
+    statusEl.className = 'f-status mono' + (cls ? ' ' + cls : '');
+    statusEl.textContent = text;
+    return;
+  }
+  statusEl.classList.add('swap');
+  setTimeout(() => {
+    statusEl.className = 'f-status mono' + (cls ? ' ' + cls : '');
+    statusEl.textContent = text;
+    requestAnimationFrame(() => statusEl.classList.remove('swap'));
+  }, 120);
+}
+
 if (form && !FORM_ENDPOINT.includes('PASTE_')) {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    statusEl.className = 'f-status mono';
-    statusEl.textContent = '';
 
     // client-side validation
     let valid = true;
@@ -22,13 +36,13 @@ if (form && !FORM_ENDPOINT.includes('PASTE_')) {
       if (bad) valid = false;
     });
     if (!valid) {
-      statusEl.textContent = 'Fill the highlighted fields.';
-      statusEl.classList.add('bad');
+      setStatus('Fill the highlighted fields.', 'bad');
       return;
     }
 
     submitBtn.disabled = true;
-    statusEl.textContent = 'Sending...';
+    submitBtn.style.opacity = '0.45';
+    setStatus('Sending...');
 
     const payload = Object.fromEntries(new FormData(form).entries());
     payload.source = 'portfolio-site';
@@ -42,13 +56,12 @@ if (form && !FORM_ENDPOINT.includes('PASTE_')) {
         body: JSON.stringify(payload),
       });
       form.reset();
-      statusEl.textContent = 'Sent. I will get back to you soon.';
-      statusEl.classList.add('ok');
+      setStatus('Sent. I will get back to you soon.', 'ok');
     } catch (err) {
-      statusEl.textContent = 'Something broke. WhatsApp me instead.';
-      statusEl.classList.add('bad');
+      setStatus('Something broke. WhatsApp me instead.', 'bad');
     } finally {
       submitBtn.disabled = false;
+      submitBtn.style.opacity = '';
     }
   });
 }
@@ -62,13 +75,26 @@ const io = new IntersectionObserver((entries) => {
     }
   });
 }, { threshold: 0.12 });
-document.querySelectorAll('.rv').forEach((el) => io.observe(el));
+// stagger indexes for grid children
+document.querySelectorAll('.stagger').forEach((grid) => {
+  [...grid.children].forEach((child, i) => child.style.setProperty('--i', i));
+});
+document.querySelectorAll('.rv, .rv-sm').forEach((el) => io.observe(el));
 // safety net: reveal everything already above the fold on load
 window.addEventListener('load', () => {
-  document.querySelectorAll('.rv:not(.in)').forEach((el) => {
+  document.querySelectorAll('.rv:not(.in), .rv-sm:not(.in)').forEach((el) => {
     if (el.getBoundingClientRect().top < window.innerHeight) el.classList.add('in');
   });
 });
+
+/* ---------------- MARQUEE: pause off-screen ---------------- */
+const marquee = document.querySelector('.marquee');
+if (marquee) {
+  const mio = new IntersectionObserver((entries) => {
+    entries.forEach((en) => marquee.classList.toggle('off', !en.isIntersecting));
+  }, { threshold: 0 });
+  mio.observe(marquee);
+}
 
 /* ---------------- LOADER ---------------- */
 const loader = document.getElementById('loader');
@@ -192,7 +218,6 @@ function resize() {
 resize();
 window.addEventListener('resize', resize);
 
-const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const clock = new THREE.Clock();
 
 function animate() {
